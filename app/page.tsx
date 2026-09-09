@@ -14,6 +14,9 @@ type RadioBlock = {
   cue?: number;
 };
 
+const RADIO_API_BASE = (process.env.NEXT_PUBLIC_RADIO_API_BASE || '').replace(/\/$/, '');
+const radioApiUrl = (path: string) => `${RADIO_API_BASE}${path}`;
+
 const vertexShader = `
   attribute vec2 position;
   void main() {
@@ -259,10 +262,10 @@ export default function Home() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch('/api/radio?channels=1', { signal: controller.signal }).then(response => response.json()).then(data => {
+    fetch(radioApiUrl('/api/radio?channels=1'), { signal: controller.signal }).then(response => response.json()).then(data => {
       if (Array.isArray(data) && data.length) setChannels(data);
     }).catch(() => {});
-    fetch('/api/radio', { signal: controller.signal }).then(response => response.json()).then((block: RadioBlock) => {
+    fetch(radioApiUrl('/api/radio'), { signal: controller.signal }).then(response => response.json()).then((block: RadioBlock) => {
       if (currentBlockRef.current) return;
       const song = Object.values(block.song || {})[0];
       if (song) setTrack({ title: song.title, artist: song.artist });
@@ -302,7 +305,7 @@ export default function Home() {
       syncTrack();
     };
     audio.addEventListener('loadedmetadata', seekToCue, { once: true });
-    audio.src = `/api/radio/audio?url=${encodeURIComponent(block.url)}`;
+    audio.src = radioApiUrl(`/api/radio/audio?url=${encodeURIComponent(block.url)}`);
     audio.load();
     if (autoplay) {
       connectAnalyser();
@@ -317,7 +320,7 @@ export default function Home() {
     params.set('chan', channelRef.current);
     if (event != null) params.set('event', String(event));
     if (elapsed != null) params.set('elapsed', String(Math.max(0, Math.round(elapsed))));
-    const response = await fetch(`/api/radio?${params}`);
+    const response = await fetch(radioApiUrl(`/api/radio?${params}`));
     if (!response.ok) throw new Error('Radio Paradise is unavailable');
     return (await response.json()) as RadioBlock;
   };
@@ -540,6 +543,7 @@ export default function Home() {
       <canvas ref={canvasRef} className="gradient-canvas" aria-hidden="true" />
       <audio
         ref={audioRef}
+        crossOrigin="anonymous"
         preload="none"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}

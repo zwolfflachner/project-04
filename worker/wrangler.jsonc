@@ -1,0 +1,11 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "project-04-radio-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-09",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true
+  }
+}
