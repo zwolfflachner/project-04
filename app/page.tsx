@@ -204,7 +204,13 @@ const fragmentShader = `
     float vignette = 1.0 - smoothstep(0.18, 1.42, length((uv - 0.5) * vec2(0.84, 1.0)));
     color *= 0.83 + vignette * 0.18;
 
-    gl_FragColor = vec4(color, 1.0);
+    // Do the final colour pass in WebGL. Safari can rasterize a filtered
+    // canvas at a different scale, which makes this field look coarse.
+    float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    color = mix(vec3(luminance), color, 1.08);
+    color = (color - 0.5) * 1.04 + 0.5;
+
+    gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
   }
 `;
 
@@ -506,14 +512,15 @@ export default function Home() {
         levels.treble *= 0.94;
         levels.energy *= 0.94;
       }
-      const elapsed = reducedMotion.matches ? 0 : (now - start) / 1000;
+      const motionScale = reducedMotion.matches ? 0.18 : 1;
+      const elapsed = ((now - start) / 1000) * motionScale;
       gl.uniform2f(resolution, canvas.width, canvas.height);
       gl.uniform2f(pointerUniform, pointer.x, pointer.y);
       gl.uniform1f(timeUniform, elapsed);
       gl.uniform1f(paletteUniform, palette);
       gl.uniform4f(audioUniform, levels.bass, levels.mid, levels.treble, levels.energy);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-      if (!reducedMotion.matches) frame = requestAnimationFrame(render);
+      frame = requestAnimationFrame(render);
     };
 
     window.addEventListener('pointermove', updatePointer, { passive: true });
@@ -554,10 +561,10 @@ export default function Home() {
       <section className="radio-player" aria-label="Radio Paradise">
         <svg className="player-squircle" viewBox="0 0 390 372" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <filter id="player-halo-blur" x="-100%" y="-100%" width="300%" height="300%" colorInterpolationFilters="sRGB">
+            <filter id="player-halo-blur" filterUnits="userSpaceOnUse" x="-200" y="-200" width="790" height="772" colorInterpolationFilters="sRGB">
               <feGaussianBlur stdDeviation="80" />
             </filter>
-            <filter id="player-edge-blur" x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
+            <filter id="player-edge-blur" filterUnits="userSpaceOnUse" x="-40" y="-40" width="470" height="452" colorInterpolationFilters="sRGB">
               <feGaussianBlur stdDeviation="10" />
             </filter>
           </defs>

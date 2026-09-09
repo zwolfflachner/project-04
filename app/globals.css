@@ -37,7 +37,8 @@ body { overscroll-behavior: none; }
   display: block;
   width: 100%;
   height: 100%;
-  filter: saturate(1.08) contrast(1.04);
+  /* Keep WebGL compositing identical in Safari and Chromium. */
+  transform: translateZ(0);
 }
 
 .radio-player {
