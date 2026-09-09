@@ -31,6 +31,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Prepare asset paths for GitHub Pages
+        run: cp -R dist/client/project-04/_next dist/client/_next
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
