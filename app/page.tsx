@@ -549,12 +549,22 @@ export default function Home() {
       />
       <section className="radio-player" aria-label="Radio Paradise">
         <svg className="player-squircle" viewBox="0 0 390 372" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <filter id="player-halo-blur" x="-100%" y="-100%" width="300%" height="300%" colorInterpolationFilters="sRGB">
+              <feGaussianBlur stdDeviation="80" />
+            </filter>
+            <filter id="player-edge-blur" x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
+              <feGaussianBlur stdDeviation="10" />
+            </filter>
+          </defs>
           <path
             className="player-squircle-halo"
+            filter="url(#player-halo-blur)"
             d="M195 1 C345 1 389 26 389 186 C389 346 345 371 195 371 C45 371 1 346 1 186 C1 26 45 1 195 1 Z"
           />
           <path
             className="player-squircle-edge"
+            filter="url(#player-edge-blur)"
             d="M195 1 C345 1 389 26 389 186 C389 346 345 371 195 371 C45 371 1 346 1 186 C1 26 45 1 195 1 Z"
           />
         </svg>

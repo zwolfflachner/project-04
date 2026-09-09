@@ -64,11 +64,13 @@ body { overscroll-behavior: none; }
 .player-squircle {
   position: absolute;
   z-index: -1;
-  inset: -46px -50px;
-  width: auto;
-  height: auto;
+  top: 50%;
+  left: 50%;
+  width: calc(100% + 100px);
+  height: calc(100% + 92px);
   overflow: visible;
   pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
 .player-squircle path {
@@ -79,13 +81,11 @@ body { overscroll-behavior: none; }
 .player-squircle-halo {
   stroke: rgba(255, 255, 255, 0.95);
   stroke-width: 2px;
-  filter: blur(80px);
 }
 
 .player-squircle-edge {
   stroke: rgba(255, 255, 255, 0.78);
   stroke-width: 3px;
-  filter: blur(10px);
 }
 
 .radio-player button {
