@@ -14,7 +14,8 @@ type RadioBlock = {
   cue?: number;
 };
 
-const RADIO_API_BASE = (process.env.NEXT_PUBLIC_RADIO_API_BASE || '').replace(/\/$/, '');
+const DEFAULT_RADIO_API_BASE = 'https://project-04-radio-api.zwolfflachner.workers.dev';
+const RADIO_API_BASE = (process.env.NEXT_PUBLIC_RADIO_API_BASE || DEFAULT_RADIO_API_BASE).replace(/\/$/, '');
 const radioApiUrl = (path: string) => `${RADIO_API_BASE}${path}`;
 
 const vertexShader = `
